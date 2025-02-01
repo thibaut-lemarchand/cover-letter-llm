@@ -25,7 +25,7 @@ def parse_job_listing(url):
     return resp
 
 
-def generate_cover_letter(resume_text, job_listing_text, prompt_template):
-    agent = get_agent()
+def generate_cover_letter(resume_text, job_listing_text, prompt_template, callbacks=None):
+    agent = get_agent(callbacks=callbacks)
     resp = agent.invoke(prompt_template.format(resume=resume_text, job_listing=job_listing_text))
     return resp

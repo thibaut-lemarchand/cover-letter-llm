@@ -3,12 +3,15 @@ from utils.utils import *
 from prompts import cover_letter_prompts
 import pyperclip
 from dotenv import load_dotenv
+from langchain.callbacks.base import BaseCallbackHandler
 load_dotenv()
 
 
 def main():
     if 'cover_letter' not in st.session_state:
         st.session_state.cover_letter = None
+    if 'generation_placeholder' not in st.session_state:
+        st.session_state.generation_placeholder = None
 
     st.title("Cover Letter Generator")
 
@@ -40,9 +43,26 @@ def main():
     if st.button("Generate Cover Letter"):
         if resume_text is not None and job_listing_text is not None:
             prompt_template = cover_letter_prompts.prompt_template_classic if cover_letter_style == "Classic" else cover_letter_prompts.prompt_template_modern
-            cover_letter = generate_cover_letter(resume_text, job_listing_text, prompt_template)
-            st.subheader("Cover Letter:")
-            st.markdown(cover_letter)
+            
+            # Create a placeholder for streaming output
+            placeholder = st.empty()
+            streaming_text = []
+
+            class StreamingCallbackHandler(BaseCallbackHandler):
+                def on_llm_new_token(self, token: str, **kwargs):
+                    streaming_text.append(token)
+                    placeholder.markdown(''.join(streaming_text))
+
+            # Generate with streaming
+            cover_letter = generate_cover_letter(
+                resume_text, 
+                job_listing_text, 
+                prompt_template, 
+                callbacks=[StreamingCallbackHandler()]
+            )
+            
+            # Update final result
+            placeholder.markdown(cover_letter)
             st.session_state.cover_letter = cover_letter
         else:
             st.warning("Please upload a resume and provide a job listing.")
