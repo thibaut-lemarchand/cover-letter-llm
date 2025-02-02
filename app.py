@@ -4,6 +4,7 @@ from prompts import cover_letter_prompts
 import pyperclip
 from dotenv import load_dotenv
 from langchain.callbacks.base import BaseCallbackHandler
+import time
 load_dotenv()
 
 
@@ -44,24 +45,60 @@ def main():
         if resume_text is not None and job_listing_text is not None:
             prompt_template = cover_letter_prompts.prompt_template_classic if cover_letter_style == "Classic" else cover_letter_prompts.prompt_template_modern
             
-            # Create a placeholder for streaming output
+            # Create thinking button placeholder first, right after the generate button
+            thinking_button_placeholder = st.empty()
+            # Create output placeholder after the thinking button
             placeholder = st.empty()
+            
             streaming_text = []
+            is_thinking = False
+            thinking_content = []
+            current_thinking = ""
+            thinking_start_time = None
 
             class StreamingCallbackHandler(BaseCallbackHandler):
                 def on_llm_new_token(self, token: str, **kwargs):
-                    streaming_text.append(token)
-                    placeholder.markdown(''.join(streaming_text))
+                    nonlocal is_thinking, current_thinking, thinking_start_time
+                    
+                    # Check for thinking tags
+                    if '<think>' in token:
+                        is_thinking = True
+                        current_thinking = ""
+                        thinking_start_time = time.time()
+                        return
+                    elif '</think>' in token:
+                        is_thinking = False
+                        # Calculate thinking duration
+                        duration = round(time.time() - thinking_start_time)
+                        # Store the complete thinking content
+                        with thinking_button_placeholder.container():
+                            with st.expander(f"Thought for {duration} seconds"):
+                                st.markdown(current_thinking)
+                        return
+                    
+                    if is_thinking:
+                        current_thinking += token
+                        # Update the thinking content with "Thinking..." during the process
+                        with thinking_button_placeholder.container():
+                            with st.expander("Thinking..."):
+                                st.markdown(current_thinking)
+                    else:
+                        streaming_text.append(token)
+                        placeholder.markdown(''.join(streaming_text))
 
             # Generate with streaming
-            cover_letter = generate_cover_letter(
+            raw_cover_letter = generate_cover_letter(
                 resume_text, 
                 job_listing_text, 
                 prompt_template, 
                 callbacks=[StreamingCallbackHandler()]
             )
             
-            # Update final result
+            # Remove thinking sections from the final cover letter
+            import re
+            cover_letter = re.sub(r'<think>.*?</think>', '', raw_cover_letter, flags=re.DOTALL)
+            
+            # Update final result with cleaned version
             placeholder.markdown(cover_letter)
             st.session_state.cover_letter = cover_letter
         else:
