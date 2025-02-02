@@ -3,7 +3,7 @@ from langchain_ollama.llms import OllamaLLM
 def get_parsing_agent(temperature=0.7, callbacks=None):
     """Smaller, faster model for parsing tasks"""
     return OllamaLLM(
-        model="deepseek-r1:1.5b",
+        model="llama3.2",
         temperature=temperature,
         streaming=True,
         callbacks=callbacks
