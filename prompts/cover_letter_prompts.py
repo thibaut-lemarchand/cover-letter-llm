@@ -1,22 +1,45 @@
 from langchain.prompts import PromptTemplate
 
 prompt_template_classic = PromptTemplate.from_template(
-    """Given the following resume and job listing information, generate a cover letter as part of the job application. The cover letter should not contain any contact information (to or from) and only contain salutations and a body of four to five information dense lines using business causal language. You should highlight any overlap of technology, responsibility or domain present between the job listing and my experience while mentioning why I would be a good fit for the given role. You should use optimistic and affirmative language and end the message with a call to action. Be concise.
-------------        
-Resume(Assume that the first few lines are personal details such as name and contact information):
+    """Generate a professional cover letter based on the following structured resume and job listing information. The cover letter should:
+
+1. Use a professional yet conversational tone
+2. Focus on 3-4 most relevant skills/experiences that match the job requirements
+3. Demonstrate understanding of the company's domain and needs
+4. Include specific examples of relevant achievements
+5. End with a clear call to action
+
+Format:
+- No contact information or formal header
+- Start with "Dear Hiring Team,"
+- 4-5 concise, information-dense paragraphs
+- End with "Best regards," followed by your name
+
+Resume Information:
 {resume}
 ------------
-Job Listing:
+Job Listing Information:
 {job_listing}"""
 )
 
 prompt_template_modern = PromptTemplate.from_template(
-    """Given the following resume and job listing information, generate a message answering the question "Tell us about yourself?" as part of the job application. You should begin the message simply with "Hi, I'm <my name>, <a short tagline created for me>" and follow it up with one short information dense paragraph using business causal language. You should highlight any overlap of technology, responsibility or domain present between the job listing and my experience while mentioning why I would be a good fit for the given role. You should use optimistic and affirmative language and end the message with a call to action. Be concise. 
-------------        
-Resume(Assume that the first few lines are personal details such as name and contact information):
+    """Create a compelling personal pitch for the question "Tell us about yourself?" based on the following resume and job listing information. The response should:
+
+1. Begin with "Hi, I'm [Name]," followed by a powerful one-line personal brand statement
+2. Focus on your most relevant skills and experiences for this specific role
+3. Demonstrate enthusiasm for the company's mission/domain
+4. Include one specific achievement that showcases your potential impact
+5. End with an engaging call to action
+
+Format:
+- One concise, high-impact paragraph (150-200 words)
+- Use natural, conversational language
+- Maintain professional tone while showing personality
+- Focus on forward-looking potential rather than just past experience
+
+Resume Information:
 {resume}
 ------------
-Job Listing:
-{job_listing}
-------------"""
+Job Listing Information:
+{job_listing}"""
 )
