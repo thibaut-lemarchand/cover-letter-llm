@@ -35,7 +35,18 @@ def main():
     elif job_listing_type == "Text":
         job_listing_text = st.text_area("Enter job listing text", "")
 
-    # Select Cover Letter Style
+    # Optional: Upload Old Cover Letter
+    st.header("Optional: Upload Old Cover Letter")
+    old_cover_letter_file = st.file_uploader("Upload your old cover letter (optional)", type=["pdf", "txt"], key="old_cover_letter_file")
+    old_cover_letter_text = None
+    if old_cover_letter_file is not None:
+        # If the file is a PDF, use parse_resume to extract text; otherwise, read directly
+        if old_cover_letter_file.type == "application/pdf":
+            old_cover_letter_text = parse_resume(old_cover_letter_file)
+        else:
+            old_cover_letter_text = old_cover_letter_file.read().decode("utf-8")
+
+    # Select Cover Letter Style (only used if no old cover letter is provided)
     st.header("3. Select Cover Letter Style")
     cover_letter_style = st.radio("Select style", ("Classic", "Modern"))
 
@@ -43,73 +54,81 @@ def main():
     st.header("4. Generate Cover Letter")
     if st.button("Generate Cover Letter"):
         if resume_text is not None and job_listing_text is not None:
-            prompt_template = cover_letter_prompts.prompt_template_classic if cover_letter_style == "Classic" else cover_letter_prompts.prompt_template_modern
-            
-            # Create thinking button placeholder first, right after the generate button
+            # Choose the prompt template based on whether an old cover letter is provided.
+            if old_cover_letter_text:
+                prompt_template = cover_letter_prompts.prompt_template_with_old
+            else:
+                prompt_template = cover_letter_prompts.prompt_template_classic if cover_letter_style == "Classic" else cover_letter_prompts.prompt_template_modern
+
+            # Create placeholders for the "thinking" expander and the streaming result.
             thinking_button_placeholder = st.empty()
-            # Create output placeholder after the thinking button
             placeholder = st.empty()
             
             streaming_text = []
             is_thinking = False
-            thinking_content = []
             current_thinking = ""
             thinking_start_time = None
 
             class StreamingCallbackHandler(BaseCallbackHandler):
                 def on_llm_new_token(self, token: str, **kwargs):
                     nonlocal is_thinking, current_thinking, thinking_start_time
-                    
-                    # Check for thinking tags
+                    # Detect start of a thinking phase.
                     if '<think>' in token:
                         is_thinking = True
                         current_thinking = ""
                         thinking_start_time = time.time()
                         return
+                    # Detect end of a thinking phase.
                     elif '</think>' in token:
                         is_thinking = False
-                        # Calculate thinking duration
                         duration = round(time.time() - thinking_start_time)
-                        # Store the complete thinking content
                         with thinking_button_placeholder.container():
                             with st.expander(f"Thought for {duration} seconds"):
                                 st.markdown(current_thinking)
                         return
-                    
+                    # While in a thinking phase, update the temporary holder.
                     if is_thinking:
                         current_thinking += token
-                        # Update the thinking content with "Thinking..." during the process
                         with thinking_button_placeholder.container():
                             with st.expander("Thinking..."):
                                 st.markdown(current_thinking)
+                    # Otherwise, stream tokens to the main output.
                     else:
                         streaming_text.append(token)
                         placeholder.markdown(''.join(streaming_text))
 
-            # Generate with streaming
-            raw_cover_letter = generate_cover_letter(
-                resume_text, 
-                job_listing_text, 
-                prompt_template, 
-                callbacks=[StreamingCallbackHandler()]
-            )
+            # Generate cover letter with streaming callbacks
+            if old_cover_letter_text:
+                raw_cover_letter = generate_cover_letter_with_old(
+                    resume_text, 
+                    job_listing_text, 
+                    old_cover_letter_text,
+                    prompt_template, 
+                    callbacks=[StreamingCallbackHandler()]
+                )
+            else:
+                raw_cover_letter = generate_cover_letter(
+                    resume_text, 
+                    job_listing_text, 
+                    prompt_template, 
+                    callbacks=[StreamingCallbackHandler()]
+                )
             
-            # Remove thinking sections from the final cover letter
+            # Remove any remaining thinking tags from the final output.
             import re
             cover_letter = re.sub(r'<think>.*?</think>', '', raw_cover_letter, flags=re.DOTALL)
             
-            # Update final result with cleaned version
+            # Display the final cover letter and update session state.
             placeholder.markdown(cover_letter)
             st.session_state.cover_letter = cover_letter
         else:
             st.warning("Please upload a resume and provide a job listing.")
 
-    # Output Cover Letter
+    # Copy Cover Letter to Clipboard
     if st.session_state.cover_letter is not None:
         if st.button("Copy to Clipboard"):
             pyperclip.copy(st.session_state.cover_letter)
             st.success("Cover letter copied to clipboard!")
-
 
 if __name__ == "__main__":
     main()

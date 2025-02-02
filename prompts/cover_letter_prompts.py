@@ -43,3 +43,18 @@ Resume Information:
 Job Listing Information:
 {job_listing}"""
 )
+
+# New prompt template that incorporates the old cover letter for style imitation.
+prompt_template_with_old = PromptTemplate.from_template(
+    """The following is an old cover letter that serves as an example of the desired style, tone, and structure.
+Old Cover Letter:
+{old_cover_letter}
+
+Based on the following resume information:
+{resume}
+------------
+and the following job listing information:
+{job_listing}
+
+Generate a new, updated cover letter that maintains the style and syntax of the old cover letter while incorporating the new details from the resume and job listing."""
+)

@@ -30,3 +30,14 @@ def generate_cover_letter(resume_text, job_listing_text, prompt_template, callba
     agent = get_generation_agent(callbacks=callbacks)
     resp = agent.invoke(prompt_template.format(resume=resume_text, job_listing=job_listing_text))
     return resp
+
+
+def generate_cover_letter_with_old(resume_text, job_listing_text, old_cover_letter_text, prompt_template, callbacks=None):
+    """
+    Uses the larger model for updated cover letter generation, incorporating the old cover letter
+    to imitate the original style and tone while adapting to the new resume and job listing.
+    """
+    agent = get_generation_agent(callbacks=callbacks)
+    prompt = prompt_template.format(resume=resume_text, job_listing=job_listing_text, old_cover_letter=old_cover_letter_text)
+    resp = agent.invoke(prompt)
+    return resp
