@@ -50,15 +50,31 @@ def main():
     st.header("3. Select Cover Letter Style")
     cover_letter_style = st.radio("Select style", ("Classic", "Modern"))
 
+    # Select Language
+    st.header("4. Select Language")
+    language_option = st.radio("Select language", ("English", "Français"))
+
     # Generate Cover Letter
-    st.header("4. Generate Cover Letter")
+    st.header("5. Generate Cover Letter")
     if st.button("Generate Cover Letter"):
         if resume_text is not None and job_listing_text is not None:
-            # Choose the prompt template based on whether an old cover letter is provided.
+            # Choose the prompt template based on whether an old cover letter is provided and the selected language.
             if old_cover_letter_text:
-                prompt_template = cover_letter_prompts.prompt_template_with_old
+                if language_option == "Français":
+                    prompt_template = cover_letter_prompts.prompt_template_with_old_fr
+                else:
+                    prompt_template = cover_letter_prompts.prompt_template_with_old
             else:
-                prompt_template = cover_letter_prompts.prompt_template_classic if cover_letter_style == "Classic" else cover_letter_prompts.prompt_template_modern
+                if cover_letter_style == "Classic":
+                    if language_option == "Français":
+                        prompt_template = cover_letter_prompts.prompt_template_classic_fr
+                    else:
+                        prompt_template = cover_letter_prompts.prompt_template_classic
+                else:
+                    if language_option == "Français":
+                        prompt_template = cover_letter_prompts.prompt_template_modern_fr
+                    else:
+                        prompt_template = cover_letter_prompts.prompt_template_modern
 
             # Create placeholders for the "thinking" expander and the streaming result.
             thinking_button_placeholder = st.empty()
