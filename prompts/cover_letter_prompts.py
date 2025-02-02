@@ -118,3 +118,55 @@ et sur l'offre d'emploi suivante :
 
 Générez une nouvelle lettre de motivation mise à jour qui conserve le style et la syntaxe de l'ancienne lettre tout en incorporant les nouvelles informations du CV et de l'offre d'emploi."""
 )
+
+prompt_template_general_fr = PromptTemplate.from_template(
+    """Tu es un expert en rédaction de lettres de motivation en français. Génère une lettre de motivation personnalisée et professionnelle en te basant sur les informations fournies, en inférant le niveau de formation, les compétences techniques, l'expérience professionnelle et l'adéquation avec le poste visé.
+
+Structure et style:
+- Adopte un ton professionnel mais personnel, démontrant à la fois compétence et humanité.
+- Structure la lettre en 5-6 paragraphes bien distincts.
+- Commence par une introduction concise présentant le contexte actuel du candidat.
+- Termine par une formule de politesse formelle adaptée au contexte.
+
+Contenu à inclure:
+1. Formation et parcours:
+   - Présente les niveaux et types de formation suivis, en soulignant les spécialités ou domaines pertinents.
+   - Met en avant les compétences acquises au cours de la formation.
+2. Compétences techniques:
+   - Détaille les compétences techniques spécifiques (langages de programmation, outils, etc.).
+   - Illustre chaque compétence par des exemples concrets d'application.
+   - Mentionne éventuellement des expériences pratiques (projets, stages).
+3. Expérience professionnelle:
+   - Décris les expériences professionnelles pertinentes.
+   - Explique clairement les responsabilités et réalisations.
+   - Établis un lien avec le poste ou stage visé.
+4. Motivation et projet professionnel:
+   - Expose clairement les objectifs de carrière à moyen terme.
+   - Explique pourquoi le poste ou stage ainsi que, le cas échéant, le service/département concerné.
+   - Démontre la cohérence du parcours professionnel.
+5. Éléments distinctifs:
+   - Utilise des termes techniques précis relatifs au domaine d'activité.
+   - Infère des spécificités en fonction des informations fournies.
+   - Relie tes compétences aux besoins spécifiques du poste.
+   - Mets en avant des soft skills pertinentes (communication, pédagogie, etc.).
+
+Format:
+- Objet de la lettre : précis et direct.
+- Longueur : 1 à 2 pages maximum.
+- Paragraphes : bien espacés et structurés.
+- Mise en page sobre et professionnelle.
+- Pas de bullet points ou de titre de section.
+
+Informations à utiliser:
+Informations du CV:
+{resume}
+------------
+Informations de l'offre d'emploi:
+{job_listing}
+
+Génère ensuite une lettre qui:
+- S'adapte au niveau de séniorité du candidat.
+- Maintient un équilibre entre détails techniques et vision d'ensemble.
+- Personnalise le contenu en fonction du service/département concerné.
+- Évite les formulations génériques ou clichés."""
+)

@@ -12,7 +12,7 @@ def get_parsing_agent(temperature=0.7, callbacks=None):
 def get_generation_agent(temperature=0.7, callbacks=None):
     """Larger model for creative text generation"""
     return OllamaLLM(
-        model="deepseek-r1:32b",  # Using the larger model for generation
+        model="mistral-small",  # Using the larger model for generation
         temperature=temperature,
         streaming=True,
         callbacks=callbacks

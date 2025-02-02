@@ -48,7 +48,7 @@ def main():
 
     # Select Cover Letter Style (only used if no old cover letter is provided)
     st.header("3. Select Cover Letter Style")
-    cover_letter_style = st.radio("Select style", ("Classic", "Modern"))
+    cover_letter_style = st.radio("Select style", ("Classic", "Modern", "Custom"))
 
     # Select Language
     st.header("4. Select Language")
@@ -70,11 +70,13 @@ def main():
                         prompt_template = cover_letter_prompts.prompt_template_classic_fr
                     else:
                         prompt_template = cover_letter_prompts.prompt_template_classic
-                else:
+                elif cover_letter_style == "Modern":
                     if language_option == "Français":
                         prompt_template = cover_letter_prompts.prompt_template_modern_fr
                     else:
                         prompt_template = cover_letter_prompts.prompt_template_modern
+                else:
+                    prompt_template = cover_letter_prompts.prompt_template_general_fr
 
             # Create placeholders for the "thinking" expander and the streaming result.
             thinking_button_placeholder = st.empty()
