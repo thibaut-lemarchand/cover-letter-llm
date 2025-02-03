@@ -33,11 +33,13 @@ def main():
             job_listing_text = parse_job_listing(job_listing_url)
             st.session_state.job_listing_text = job_listing_text
     elif job_listing_type == "Text":
-        job_listing_text = st.text_area("Enter job listing text", "")
+        job_listing_raw_text = st.text_area("Enter job listing text", "")
+        job_listing_text = preprocess_job_listing(job_listing_raw_text)
 
     # NEW FEATURE: Optional Company Context
     st.header("Optional: Company Context")
-    company_context = st.text_area("Enter additional company context (optional)", "")
+    raw_company_context = st.text_area("Enter additional company context (optional)", "")
+    company_context = preprocess_company_context(raw_company_context)
 
     # Optional: Upload Old Cover Letter
     st.header("Optional: Upload Old Cover Letter")
