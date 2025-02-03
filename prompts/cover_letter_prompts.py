@@ -44,7 +44,81 @@ def get_cover_letter_prompt(
             )
         else:
             style_instructions = (
-                "Générez une lettre de motivation adaptée basée sur les informations fournies, en utilisant un ton professionnel et personnalisé.\n\n"
+                """
+                ## Objectif
+                Génère une lettre de motivation professionnelle personnalisée et percutante qui met en valeur les compétences, l'expérience et la motivation du candidat.
+
+                ## Principes fondamentaux
+                - Créer une lettre unique, authentique et adaptée au profil spécifique du candidat
+                - Établir un lien clair entre le profil du candidat et les besoins du poste
+                - Démontrer de la valeur ajoutée potentielle pour l'entreprise/l'organisation
+
+                ## Structure et style
+                - Ton : Professionnel, dynamique et authentique
+                - Structure : 4-5 paragraphes cohérents
+                - Langage : Précis, concis et orienté résultats
+                - Style : Personnalisé et non formaté
+
+                ## Informations requises avant génération
+                1. Profil du candidat :
+                - Formation
+                - Expériences professionnelles
+                - Compétences techniques et transversales
+                - Réalisations significatives
+
+                2. Détails du poste/candidature :
+                - Intitulé du poste
+                - Entreprise/organisation
+                - Secteur d'activité
+                - Missions principales
+                - Compétences recherchées
+
+                ## Composantes de la lettre
+
+                ### 1. Introduction
+                - Mentionner le poste visé
+                - Expliquer brièvement la source de la candidature
+                - Donner un aperçu rapide de l'alignement candidat/poste
+
+                ### 2. Parcours professionnel
+                - Sélectionner les expériences les plus pertinentes
+                - Mettre en avant les compétences directement liées au poste
+                - Utiliser des exemples concrets avec des résultats mesurables
+                - Éviter la simple répétition du CV
+
+                ### 3. Motivation et adéquation
+                - Expliquer pourquoi ce poste/cette entreprise
+                - Démontrer une compréhension du contexte et des enjeux
+                - Montrer l'alignement entre les valeurs du candidat et celles de l'entreprise
+                - Prouver une réflexion personnelle approfondie
+
+                ### 4. Valeur ajoutée
+                - Identifier les compétences uniques du candidat
+                - Expliquer comment ces compétences bénéficieront à l'entreprise
+                - Proposer une vision prospective de la contribution
+
+                ### 5. Conclusion
+                - Réaffirmer l'intérêt pour le poste
+                - Exprimer l'enthousiasme et la disponibilité
+                - Formule de politesse adaptée au contexte culturel
+
+                ## Directives de rédaction
+                - Personnaliser chaque lettre
+                - Éviter les clichés et formulations génériques
+                - Privilégier la concision et la clarté
+                - Adapter le ton au secteur et à la culture de l'entreprise
+                - Mettre en avant l'originalité du profil
+
+                ## Contraintes techniques
+                - Longueur : 300-500 mots
+                - Format : Adapté au contexte professionnel local
+                - Orthographe et grammaire irréprochables
+                - Mise en page professionnelle et lisible
+
+                ## Recommandations spéciales
+                - Contextualiser la lettre selon le pays/secteur
+                - Prendre en compte les subtilités culturelles
+                - S'adapter aux attentes spécifiques du recruteur\n\n"""
             )
 
         resume_information = f"Informations du CV:\n{resume}\n------------\n" if resume is not None else ""

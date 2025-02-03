@@ -4,6 +4,7 @@ from langchain.prompts import PromptTemplate
 prompt_template = PromptTemplate.from_template(
     """Analyze the following job listing text and extract key information in a structured format. Focus on:
 
+0. The job name, exactly as given in the job listing
 1. Company Overview: Extract key details about the company
 2. Role Overview: The main purpose and objectives of the position
 3. Key Responsibilities: Main duties and tasks
