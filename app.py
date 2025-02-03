@@ -35,6 +35,10 @@ def main():
     elif job_listing_type == "Text":
         job_listing_text = st.text_area("Enter job listing text", "")
 
+    # NEW FEATURE: Optional Company Context
+    st.header("Optional: Company Context")
+    company_context = st.text_area("Enter additional company context (optional)", "")
+
     # Optional: Upload Old Cover Letter
     st.header("Optional: Upload Old Cover Letter")
     old_cover_letter_file = st.file_uploader("Upload your old cover letter (optional)", type=["pdf", "txt"], key="old_cover_letter_file")
@@ -58,27 +62,7 @@ def main():
     st.header("5. Generate Cover Letter")
     if st.button("Generate Cover Letter"):
         if resume_text is not None and job_listing_text is not None:
-            # Choose the prompt template based on whether an old cover letter is provided and the selected language.
-            if old_cover_letter_text:
-                if language_option == "Français":
-                    prompt_template = cover_letter_prompts.prompt_template_with_old_fr
-                else:
-                    prompt_template = cover_letter_prompts.prompt_template_with_old
-            else:
-                if cover_letter_style == "Classic":
-                    if language_option == "Français":
-                        prompt_template = cover_letter_prompts.prompt_template_classic_fr
-                    else:
-                        prompt_template = cover_letter_prompts.prompt_template_classic
-                elif cover_letter_style == "Modern":
-                    if language_option == "Français":
-                        prompt_template = cover_letter_prompts.prompt_template_modern_fr
-                    else:
-                        prompt_template = cover_letter_prompts.prompt_template_modern
-                else:
-                    prompt_template = cover_letter_prompts.prompt_template_general_fr
 
-            # Create placeholders for the "thinking" expander and the streaming result.
             thinking_button_placeholder = st.empty()
             placeholder = st.empty()
             
@@ -115,23 +99,21 @@ def main():
                         streaming_text.append(token)
                         placeholder.markdown(''.join(streaming_text))
 
-            # Generate cover letter with streaming callbacks
-            if old_cover_letter_text:
-                raw_cover_letter = generate_cover_letter_with_old(
-                    resume_text, 
-                    job_listing_text, 
-                    old_cover_letter_text,
-                    prompt_template, 
-                    callbacks=[StreamingCallbackHandler()]
-                )
-            else:
-                raw_cover_letter = generate_cover_letter(
-                    resume_text, 
-                    job_listing_text, 
-                    prompt_template, 
-                    callbacks=[StreamingCallbackHandler()]
-                )
             
+            prompt_cover_letter = cover_letter_prompts.get_cover_letter_prompt(
+                resume=resume_text,
+                job_listing=job_listing_text,
+                style=cover_letter_style,
+                language=language_option,
+                old_cover_letter=old_cover_letter_text,
+                company_context=company_context,
+            )
+
+            raw_cover_letter = generate_cover_letter(
+                    prompt_cover_letter,
+                    callbacks=[StreamingCallbackHandler()]
+                )
+
             # Remove any remaining thinking tags from the final output.
             import re
             cover_letter = re.sub(r'<think>.*?</think>', '', raw_cover_letter, flags=re.DOTALL)
